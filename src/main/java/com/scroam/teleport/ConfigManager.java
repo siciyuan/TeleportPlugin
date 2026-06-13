@@ -93,20 +93,6 @@ public class ConfigManager {
             updated = true;
         }
         
-        // 确保地标配置存在
-        if (!plugin.getConfig().contains("warp.create.price")) {
-            plugin.getConfig().set("warp.create.price", 100.0);
-            updated = true;
-        }
-        if (!plugin.getConfig().contains("warp.create.free_count")) {
-            plugin.getConfig().set("warp.create.free_count", 0);
-            updated = true;
-        }
-        if (!plugin.getConfig().contains("warp.teleport.free_count")) {
-            plugin.getConfig().set("warp.teleport.free_count", 3);
-            updated = true;
-        }
-        
         if (updated) {
             plugin.saveConfig();
             plugin.getLogger().info("Configuration updated with missing defaults.");

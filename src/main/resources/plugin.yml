@@ -1,5 +1,5 @@
 name: TeleportPlugin
-version: 2.2.0
+version: 2.1.0
 main: com.scroam.teleport.TeleportPlugin
 api-version: '1.21'
 author: SCROAM
@@ -163,10 +163,6 @@ commands:
     description: Land management commands (alias)
     usage: /landlord [buy|sell|add|remove|list|info|perm|set|tp]
     permission: teleport.land
-  warp:
-    description: Warp system commands
-    usage: /warp [create|delete|tp|list|info|price|my]
-    permission: teleport.warp
 
 permissions:
   teleport.admin:
@@ -207,28 +203,4 @@ permissions:
     default: true
   teleport.land:
     description: Land system permissions
-    default: true
-  teleport.warp:
-    description: Warp system permissions
-    default: true
-  teleport.warp.create:
-    description: Create warp permissions
-    default: true
-  teleport.warp.delete:
-    description: Delete warp permissions
-    default: true
-  teleport.warp.teleport:
-    description: Teleport to warp permissions
-    default: true
-  teleport.warp.list:
-    description: List warps permissions
-    default: true
-  teleport.warp.info:
-    description: Warp info permissions
-    default: true
-  teleport.warp.setprice:
-    description: Set warp price permissions
-    default: true
-  teleport.warp.my:
-    description: View own warps permissions
     default: true
