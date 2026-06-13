@@ -9,7 +9,7 @@ for /r "D:\Users\Administrator\Desktop\minecraft\MSL\Server\libraries" %%a in (*
     set "CLASSPATH=!CLASSPATH!;%%a"
 )
 
-echo Compiling TeleportPlugin v2.1.0...
+echo Compiling TeleportPlugin v2.2.0...
 
 rmdir /s /q target 2>nul
 mkdir target\classes
@@ -18,9 +18,9 @@ javac -cp "%CLASSPATH%" -d target/classes src/main/java/com/scroam/teleport/*.ja
 
 if %errorlevel% equ 0 (
     echo Compilation successful!
-    jar cf target/TeleportPlugin-2.1.0.jar -C target/classes . -C src/main/resources .
-    echo JAR created at target/TeleportPlugin-2.1.0.jar
-    xcopy /Y "target\TeleportPlugin-2.1.0.jar" "D:\Users\Administrator\Desktop\minecraft\MSL\Server\plugins\"
+    jar cf target/TeleportPlugin-2.2.0.jar -C target/classes . -C src/main/resources .
+    echo JAR created at target/TeleportPlugin-2.2.0.jar
+    xcopy /Y "target\TeleportPlugin-2.2.0.jar" "D:\Users\Administrator\Desktop\minecraft\MSL\Server\plugins\"
 ) else (
     echo Compilation failed!
     pause

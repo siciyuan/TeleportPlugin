@@ -129,6 +129,31 @@ public class DatabaseManager {
                     "last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                     "UNIQUE(user_uuid, stat_type)" +
                     ")");
+            
+            // 地标数据表
+            stmt.execute("CREATE TABLE IF NOT EXISTS warps (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "name VARCHAR(64) UNIQUE NOT NULL," +
+                    "owner_uuid VARCHAR(36) NOT NULL," +
+                    "owner_name VARCHAR(16) NOT NULL," +
+                    "world_name VARCHAR(64) NOT NULL," +
+                    "x DOUBLE NOT NULL," +
+                    "y DOUBLE NOT NULL," +
+                    "z DOUBLE NOT NULL," +
+                    "yaw FLOAT DEFAULT 0," +
+                    "pitch FLOAT DEFAULT 0," +
+                    "is_public BOOLEAN DEFAULT TRUE," +
+                    "teleport_price DECIMAL(18,2) DEFAULT 0," +
+                    "created_time BIGINT DEFAULT 0" +
+                    ")");
+            
+            // 地标免费次数表
+            stmt.execute("CREATE TABLE IF NOT EXISTS warp_free_count (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "user_uuid VARCHAR(36) UNIQUE NOT NULL," +
+                    "create_used INTEGER DEFAULT 0," +
+                    "teleport_used INTEGER DEFAULT 0" +
+                    ")");
         }
     }
 
@@ -599,6 +624,130 @@ public class DatabaseManager {
         } catch (SQLException e) {
             plugin.getLogger().warning("Failed to close database connection: " + e.getMessage());
         }
+    }
+    
+    // ========== 地标数据操作 ==========
+    
+    /**
+     * 保存地标
+     */
+    public void saveWarp(Warp warp) {
+        try {
+            String sql = "INSERT OR REPLACE INTO warps (" +
+                    "name, owner_uuid, owner_name, world_name, x, y, z, yaw, pitch, " +
+                    "is_public, teleport_price, created_time) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, warp.getName());
+                pstmt.setString(2, warp.getOwnerId().toString());
+                pstmt.setString(3, warp.getOwnerName());
+                pstmt.setString(4, warp.getWorld().getName());
+                pstmt.setDouble(5, warp.getX());
+                pstmt.setDouble(6, warp.getY());
+                pstmt.setDouble(7, warp.getZ());
+                pstmt.setFloat(8, warp.getLocation().getYaw());
+                pstmt.setFloat(9, warp.getLocation().getPitch());
+                pstmt.setBoolean(10, warp.isPublic());
+                pstmt.setDouble(11, warp.getTeleportPrice());
+                pstmt.setLong(12, warp.getCreatedTime());
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to save warp: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 加载所有地标
+     */
+    public java.util.List<Warp> loadWarps() {
+        java.util.List<Warp> warps = new java.util.ArrayList<>();
+        try {
+            String sql = "SELECT * FROM warps";
+            try (Statement stmt = connection.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
+                while (rs.next()) {
+                    World world = Bukkit.getWorld(rs.getString("world_name"));
+                    if (world == null) continue;
+                    
+                    Location loc = new Location(
+                            world,
+                            rs.getDouble("x"),
+                            rs.getDouble("y"),
+                            rs.getDouble("z"),
+                            rs.getFloat("yaw"),
+                            rs.getFloat("pitch")
+                    );
+                    
+                    Warp warp = new Warp(
+                            rs.getString("name"),
+                            loc,
+                            UUID.fromString(rs.getString("owner_uuid")),
+                            rs.getString("owner_name"),
+                            rs.getLong("created_time"),
+                            rs.getBoolean("is_public"),
+                            rs.getDouble("teleport_price")
+                    );
+                    warps.add(warp);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to load warps: " + e.getMessage());
+        }
+        return warps;
+    }
+    
+    /**
+     * 删除地标
+     */
+    public void deleteWarp(String name) {
+        try {
+            String sql = "DELETE FROM warps WHERE name = ?";
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, name);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to delete warp: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 保存地标免费次数
+     */
+    public void saveWarpFreeCount(UUID playerId, int createUsed, int teleportUsed) {
+        try {
+            String sql = "INSERT OR REPLACE INTO warp_free_count (user_uuid, create_used, teleport_used) " +
+                    "VALUES (?, ?, ?)";
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, playerId.toString());
+                pstmt.setInt(2, createUsed);
+                pstmt.setInt(3, teleportUsed);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to save warp free count: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 加载地标免费次数
+     */
+    public int[] loadWarpFreeCount(UUID playerId) {
+        try {
+            String sql = "SELECT create_used, teleport_used FROM warp_free_count WHERE user_uuid = ?";
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, playerId.toString());
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new int[]{rs.getInt("create_used"), rs.getInt("teleport_used")};
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to load warp free count: " + e.getMessage());
+        }
+        return new int[]{0, 0};
     }
 
     // ========== 数据类 ==========

@@ -17,6 +17,7 @@ public class TeleportPlugin extends JavaPlugin {
     private DatabaseManager databaseManager;
     private DataMigrationManager migrationManager;
     private LandManager landManager;
+    private WarpManager warpManager;
 
     @Override
     public void onEnable() {
@@ -38,13 +39,17 @@ public class TeleportPlugin extends JavaPlugin {
         if (configManager.isDatabaseEnabled()) {
             landManager = new LandManager(this);
             getLogger().info("Land system enabled!");
+            
+            // 初始化地标系统
+            warpManager = new WarpManager(this);
+            getLogger().info("Warp system enabled!");
         }
 
         registerCommands();
         registerListeners();
         scheduleDailyReset();
         
-        getLogger().info("TeleportPlugin v2.1.0 enabled!");
+        getLogger().info("TeleportPlugin v2.2.0 enabled!");
     }
 
     @Override
@@ -56,7 +61,7 @@ public class TeleportPlugin extends JavaPlugin {
         if (databaseManager != null) {
             databaseManager.close();
         }
-        getLogger().info("TeleportPlugin v2.1.0 disabled!");
+        getLogger().info("TeleportPlugin v2.2.0 disabled!");
     }
 
     private void scheduleDailyReset() {
@@ -92,6 +97,11 @@ public class TeleportPlugin extends JavaPlugin {
         if (landManager != null) {
             new LandCommand(this);
         }
+        
+        // 注册地标系统
+        if (warpManager != null) {
+            new WarpCommand(this);
+        }
     }
 
     private void registerListeners() {
@@ -124,5 +134,9 @@ public class TeleportPlugin extends JavaPlugin {
     
     public LandManager getLandManager() {
         return landManager;
+    }
+    
+    public WarpManager getWarpManager() {
+        return warpManager;
     }
 }
