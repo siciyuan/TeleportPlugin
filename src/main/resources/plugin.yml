@@ -1,0 +1,206 @@
+name: TeleportPlugin
+version: 2.1.0
+main: com.scroam.teleport.TeleportPlugin
+api-version: '1.21'
+author: SCROAM
+description: Lightweight teleportation plugin with modular design
+website: https://blog.world123.top
+
+commands:
+  spawn:
+    description: Teleport to spawn
+    usage: /spawn
+    permission: teleport.spawn
+  setspawn:
+    description: Set spawn location
+    usage: /setspawn
+    permission: teleport.admin
+  home:
+    description: Teleport to home
+    usage: /home [name]
+    permission: teleport.home
+  sethome:
+    description: Set home location
+    usage: /sethome [name]
+    permission: teleport.sethome
+  delhome:
+    description: Delete home
+    usage: /delhome <name>
+    permission: teleport.sethome
+  homes:
+    description: List homes
+    usage: /homes
+    permission: teleport.home
+  rtp:
+    description: Random teleport
+    usage: /rtp [radius]
+    permission: teleport.rtp
+  tpa:
+    description: Request teleport to player
+    usage: /tpa <player>
+    permission: teleport.tpa
+  tpahere:
+    description: Request player to teleport to you
+    usage: /tpahere <player>
+    permission: teleport.tpahere
+  tpaccept:
+    description: Accept teleport request
+    usage: /tpaccept
+    permission: teleport.tpaccept
+  tpdeny:
+    description: Deny teleport request
+    usage: /tpdeny
+    permission: teleport.tpdeny
+  balance:
+    description: Check balance
+    usage: /balance
+    permission: teleport.balance
+  bal:
+    description: Check balance (short)
+    usage: /bal
+    permission: teleport.balance
+  pay:
+    description: Pay other player
+    usage: /pay <player> <amount>
+    permission: teleport.pay
+  givemoney:
+    description: Give money to player (admin)
+    usage: /givemoney <player> <amount>
+    permission: teleport.admin
+  rtpinfo:
+    description: Check RTP info
+    usage: /rtpinfo
+    permission: teleport.rtp
+  teleportadmin:
+    description: Admin commands for TeleportPlugin
+    usage: /teleportadmin [reload|info]
+    permission: teleport.admin
+  setrtpprice:
+    description: Set RTP price
+    usage: /setrtpprice <price>
+    permission: teleport.admin
+  setrtpfree:
+    description: Set daily free RTP count
+    usage: /setrtpfree <count>
+    permission: teleport.admin
+  setmaxhomes:
+    description: Set max homes per player
+    usage: /setmaxhomes <count>
+    permission: teleport.admin
+  settax:
+    description: Set transfer tax rate
+    usage: /settax <rate>
+    permission: teleport.admin
+  deposit:
+    description: Deposit items for money
+    usage: /deposit <item_type> <amount>
+    permission: teleport.exchange
+  withdraw:
+    description: Withdraw items using money
+    usage: /withdraw <item_type> <amount>
+    permission: teleport.exchange
+  exchange:
+    description: Exchange info
+    usage: /exchange
+    permission: teleport.exchange
+  exchangeinfo:
+    description: Exchange info (short)
+    usage: /exchangeinfo
+    permission: teleport.exchange
+  announce:
+    description: Send global announcement
+    usage: /announce <message>
+    permission: teleport.admin
+  broadcast:
+    description: Send global announcement (alias)
+    usage: /broadcast <message>
+    permission: teleport.admin
+  setmotd:
+    description: Set server MOTD
+    usage: /setmotd <message>
+    permission: teleport.admin
+  setsign:
+    description: Set sign content
+    usage: /setsign <line1> [line2] [line3] [line4]
+    permission: teleport.admin
+  registersign:
+    description: Register a sign as announcement board
+    usage: /registersign
+    permission: teleport.admin
+  unregistersign:
+    description: Unregister an announcement sign
+    usage: /unregistersign
+    permission: teleport.admin
+  signlist:
+    description: List registered signs
+    usage: /signlist
+    permission: teleport.admin
+  addannouncement:
+    description: Add announcement content
+    usage: /addannouncement <content>
+    permission: teleport.admin
+  removeannouncement:
+    description: Remove announcement
+    usage: /removeannouncement <index>
+    permission: teleport.admin
+  announcementlist:
+    description: List announcements
+    usage: /announcementlist
+    permission: teleport.admin
+  protection:
+    description: World protection management
+    usage: /protection [add|remove|list|info|setradius|toggle]
+    permission: teleport.admin
+  prot:
+    description: World protection management (short)
+    usage: /prot [add|remove|list|info|setradius|toggle]
+    permission: teleport.admin
+  land:
+    description: Land management commands
+    usage: /land [buy|sell|add|remove|list|info|perm|set|tp]
+    permission: teleport.land
+  landlord:
+    description: Land management commands (alias)
+    usage: /landlord [buy|sell|add|remove|list|info|perm|set|tp]
+    permission: teleport.land
+
+permissions:
+  teleport.admin:
+    description: Admin permissions
+    default: op
+  teleport.home:
+    description: Home teleport permissions
+    default: true
+  teleport.sethome:
+    description: Set home permissions
+    default: true
+  teleport.spawn:
+    description: Spawn teleport permissions
+    default: true
+  teleport.rtp:
+    description: Random teleport permissions
+    default: true
+  teleport.tpa:
+    description: Teleport request permissions
+    default: true
+  teleport.tpahere:
+    description: Teleport here request permissions
+    default: true
+  teleport.tpaccept:
+    description: Accept teleport request permissions
+    default: true
+  teleport.tpdeny:
+    description: Deny teleport request permissions
+    default: true
+  teleport.balance:
+    description: Check balance permissions
+    default: true
+  teleport.pay:
+    description: Pay other player permissions
+    default: true
+  teleport.exchange:
+    description: Exchange permissions
+    default: true
+  teleport.land:
+    description: Land system permissions
+    default: true
