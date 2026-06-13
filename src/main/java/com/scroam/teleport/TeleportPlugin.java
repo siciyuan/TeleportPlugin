@@ -17,6 +17,7 @@ public class TeleportPlugin extends JavaPlugin {
     private DatabaseManager databaseManager;
     private DataMigrationManager migrationManager;
     private LandManager landManager;
+    private WaypointManager waypointManager;
 
     @Override
     public void onEnable() {
@@ -33,7 +34,13 @@ public class TeleportPlugin extends JavaPlugin {
         
         homeManager = new HomeManager(this);
         tpaManager = new TpaManager(this);
-        
+
+        // 初始化地标系统
+        if (configManager.isDatabaseEnabled()) {
+            waypointManager = new WaypointManager(this);
+            getLogger().info("Waypoint system enabled!");
+        }
+
         // 初始化领地系统
         if (configManager.isDatabaseEnabled()) {
             landManager = new LandManager(this);
@@ -87,10 +94,15 @@ public class TeleportPlugin extends JavaPlugin {
         // 注册世界保护
         WorldProtectionListener protection = new WorldProtectionListener(this);
         new ProtectionCommand(this, protection);
-        
+
         // 注册领地系统
         if (landManager != null) {
             new LandCommand(this);
+        }
+
+        // 注册地标系统
+        if (waypointManager != null) {
+            new WaypointCommand(this);
         }
     }
 
@@ -124,5 +136,9 @@ public class TeleportPlugin extends JavaPlugin {
     
     public LandManager getLandManager() {
         return landManager;
+    }
+
+    public WaypointManager getWaypointManager() {
+        return waypointManager;
     }
 }

@@ -129,6 +129,26 @@ public class DatabaseManager {
                     "last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                     "UNIQUE(user_uuid, stat_type)" +
                     ")");
+
+            // 地标数据表
+            stmt.execute("CREATE TABLE IF NOT EXISTS waypoints (" +
+                    "id VARCHAR(128) PRIMARY KEY," +
+                    "name VARCHAR(64) NOT NULL," +
+                    "creator_uuid VARCHAR(36) NOT NULL," +
+                    "world_name VARCHAR(64) NOT NULL," +
+                    "x DOUBLE NOT NULL," +
+                    "y DOUBLE NOT NULL," +
+                    "z DOUBLE NOT NULL," +
+                    "yaw FLOAT DEFAULT 0," +
+                    "pitch FLOAT DEFAULT 0," +
+                    "create_count INTEGER DEFAULT 0," +
+                    "teleport_count INTEGER DEFAULT 3," +
+                    "create_price DECIMAL(18,2) DEFAULT 0," +
+                    "teleport_price DECIMAL(18,2) DEFAULT 0," +
+                    "requires_permission BOOLEAN DEFAULT FALSE," +
+                    "pending_permissions TEXT DEFAULT ''," +
+                    "created_time BIGINT DEFAULT 0" +
+                    ")");
         }
     }
 
@@ -598,6 +618,76 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             plugin.getLogger().warning("Failed to close database connection: " + e.getMessage());
+        }
+    }
+
+    // ========== 地标操作 ==========
+
+    public void saveWaypoint(Waypoint waypoint) {
+        try {
+            String sql = "INSERT OR REPLACE INTO waypoints (" +
+                    "id, name, creator_uuid, world_name, x, y, z, yaw, pitch, " +
+                    "create_count, teleport_count, create_price, teleport_price, " +
+                    "requires_permission, pending_permissions, created_time) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, waypoint.getId());
+                pstmt.setString(2, waypoint.getName());
+                pstmt.setString(3, waypoint.getCreator().toString());
+                pstmt.setString(4, waypoint.getWorldName());
+                pstmt.setDouble(5, waypoint.getX());
+                pstmt.setDouble(6, waypoint.getY());
+                pstmt.setDouble(7, waypoint.getZ());
+                pstmt.setFloat(8, waypoint.getYaw());
+                pstmt.setFloat(9, waypoint.getPitch());
+                pstmt.setInt(10, waypoint.getCreateCount());
+                pstmt.setInt(11, waypoint.getTeleportCount());
+                pstmt.setDouble(12, waypoint.getCreatePrice());
+                pstmt.setDouble(13, waypoint.getTeleportPrice());
+                pstmt.setBoolean(14, waypoint.isRequiresPermission());
+
+                // 构建待批准权限字符串
+                String pendingStr = "";
+                java.util.Set<java.util.UUID> pending = 
+                    plugin.getWaypointManager().getPendingPermissions(waypoint.getId());
+                if (pending != null && !pending.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (java.util.UUID uuid : pending) {
+                        if (sb.length() > 0) sb.append(",");
+                        sb.append(uuid.toString());
+                    }
+                    pendingStr = sb.toString();
+                }
+                pstmt.setString(15, pendingStr);
+                pstmt.setLong(16, waypoint.getCreatedTime());
+
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to save waypoint: " + e.getMessage());
+        }
+    }
+
+    public ResultSet getWaypoints() {
+        try {
+            String sql = "SELECT * FROM waypoints";
+            Statement stmt = connection.createStatement();
+            return stmt.executeQuery(sql);
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to get waypoints: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public void deleteWaypoint(String waypointId) {
+        try {
+            String sql = "DELETE FROM waypoints WHERE id = ?";
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, waypointId);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to delete waypoint: " + e.getMessage());
         }
     }
 

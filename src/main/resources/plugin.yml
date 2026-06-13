@@ -98,6 +98,15 @@ commands:
   withdraw:
     description: Withdraw items using money
     usage: /withdraw <item_type> <amount>
+  warp:
+    description: Waypoint system
+    usage: /warp <name> [args]
+  landlord:
+    description: Land management
+    usage: /landlord [args]
+  land:
+    description: Land commands
+    usage: /land [args]
     permission: teleport.exchange
   exchange:
     description: Exchange info
@@ -203,4 +212,19 @@ permissions:
     default: true
   teleport.land:
     description: Land system permissions
+    default: true
+  teleport.warp:
+    description: Warp/waypoint permissions
+    default: true
+  teleport.warp.create:
+    description: Create waypoint permissions
+    default: true
+  teleport.warp.delete:
+    description: Delete waypoint permissions
+    default: true
+  teleport.warp.admin:
+    description: Admin waypoint management permissions
+    default: op
+  teleport.warp.perm:
+    description: Waypoint permission management permissions
     default: true
