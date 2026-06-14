@@ -428,3 +428,4 @@ https://blog.world123.top
 - 博客：https://blog.world123.top
 - GitHub：https://github.com/siciyuan/TeleportPlugin
 - 直接下载使用版本:https://www.spigotmc.org/resources/teleportplugin.136114/
+- https://deepwiki.com/siciyuan/TeleportPlugin
